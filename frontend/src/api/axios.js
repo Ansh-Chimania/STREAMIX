@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 const API = axios.create({
-  baseURL: 'https://version2-jri3.onrender.com',
+  baseURL: `${apiBaseUrl.replace(/\/$/, '')}/api`,
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' }
 });
