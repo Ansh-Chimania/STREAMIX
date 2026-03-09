@@ -5,7 +5,9 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-const connectDB = require('./config/db');
+// Verify Supabase config
+const { supabaseAdmin } = require('./config/supabase');
+
 const authRoutes = require('./routes/auth');
 const movieRoutes = require('./routes/movies');
 const favoriteRoutes = require('./routes/favorites');
@@ -15,9 +17,6 @@ const tmdbRoutes = require('./routes/tmdb');
 
 const app = express();
 
-// Connect Database
-connectDB();
-
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -25,9 +24,22 @@ const limiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' }
 });
 
+const allowedOrigins = (process.env.FRONTEND_URLS || 'http://localhost:3000,https://version2-jri3.onrender.com')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 // Middleware
 app.use(helmet());
-app.use(cors({ origin: ['https://version2-jri3.onrender.com'], credentials: true }));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('CORS origin not allowed'));
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(morgan('dev'));
 app.use('/api/', limiter);
@@ -41,8 +53,24 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/tmdb', tmdbRoutes);
 
 // Health Check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'CineVerse API is running', timestamp: new Date() });
+app.get('/api/health', async (req, res) => {
+  try {
+    // Test Supabase connection
+    const { error } = await supabaseAdmin.from('profiles').select('id').limit(1);
+    res.json({
+      status: 'CineVerse API is running',
+      database: error ? 'disconnected' : 'connected',
+      provider: 'Supabase',
+      timestamp: new Date()
+    });
+  } catch (err) {
+    res.json({
+      status: 'CineVerse API is running',
+      database: 'disconnected',
+      provider: 'Supabase',
+      timestamp: new Date()
+    });
+  }
 });
 
 // 404 Handler
@@ -62,4 +90,5 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🎬 CineVerse Server running on port ${PORT}`);
+  console.log(`📦 Database: Supabase (${process.env.SUPABASE_URL})`);
 });
