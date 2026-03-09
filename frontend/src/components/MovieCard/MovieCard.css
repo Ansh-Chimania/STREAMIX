@@ -1,0 +1,153 @@
+.movie-card {
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  animation: fadeIn 0.5s ease;
+}
+
+.movie-card:hover {
+  transform: scale(1.05);
+  z-index: 5;
+}
+
+.card-poster {
+  position: relative;
+  aspect-ratio: 2/3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.card-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-slow);
+}
+
+.movie-card:hover .card-poster img {
+  transform: scale(1.08);
+}
+
+.card-skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: var(--transition-normal);
+}
+
+.movie-card:hover .card-overlay {
+  opacity: 1;
+}
+
+.card-play-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-full);
+  background: var(--accent-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  transition: var(--transition-fast);
+  transform: scale(0.8);
+}
+
+.movie-card:hover .card-play-btn {
+  transform: scale(1);
+}
+
+.card-play-btn:hover {
+  transform: scale(1.15) !important;
+  box-shadow: var(--shadow-glow);
+}
+
+.card-fav-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: var(--transition-normal);
+  z-index: 3;
+}
+
+.movie-card:hover .card-fav-btn {
+  opacity: 1;
+}
+
+.card-fav-btn.active {
+  opacity: 1;
+  background: var(--accent-primary);
+}
+
+.card-fav-btn:hover {
+  transform: scale(1.2);
+}
+
+.card-rating {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.75);
+  color: var(--accent-gold);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.card-media-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: var(--accent-primary);
+  color: white;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.card-info {
+  padding: 10px 4px 4px;
+}
+
+.card-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary);
+}
+
+.card-year {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}

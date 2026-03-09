@@ -1,0 +1,10 @@
+.home-page {
+  min-height: 100vh;
+}
+
+.home-content {
+  position: relative;
+  z-index: 2;
+  margin-top: -80px;
+  padding-bottom: 40px;
+}

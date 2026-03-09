@@ -1,0 +1,249 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: var(--navbar-height);
+  display: flex;
+  align-items: center;
+  transition: var(--transition-normal);
+  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+}
+
+.navbar.scrolled {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 4%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  z-index: 10;
+}
+
+.logo-cine {
+  color: var(--accent-primary);
+}
+
+.logo-verse {
+  color: var(--text-primary);
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: var(--transition-fast);
+  position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--text-primary);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-primary);
+  border-radius: 1px;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-icon-btn {
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  padding: 8px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.nav-icon-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--accent-primary);
+}
+
+.btn-signin {
+  background: var(--accent-primary);
+  color: white;
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: var(--transition-fast);
+}
+
+.btn-signin:hover {
+  background: var(--accent-secondary);
+  transform: scale(1.05);
+}
+
+.user-menu-wrapper {
+  position: relative;
+}
+
+.user-avatar-btn {
+  background: transparent;
+  padding: 0;
+}
+
+.avatar-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background: var(--accent-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
+  transition: var(--transition-fast);
+}
+
+.avatar-circle.large {
+  width: 45px;
+  height: 45px;
+  font-size: 1.1rem;
+}
+
+.user-avatar-btn:hover .avatar-circle {
+  box-shadow: var(--shadow-glow);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 260px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: scaleIn 0.2s ease;
+  z-index: 1001;
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.dropdown-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.dropdown-email {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--border-color);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: var(--transition-fast);
+  width: 100%;
+  background: transparent;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.dropdown-item.admin-link {
+  color: var(--accent-gold);
+}
+
+.dropdown-item.logout-btn {
+  color: var(--accent-primary);
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 1.4rem;
+  padding: 8px;
+}
+
+@media (max-width: 768px) {
+  .navbar-links {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-primary);
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    transform: translateX(-100%);
+    transition: var(--transition-normal);
+    z-index: 5;
+  }
+
+  .navbar-links.active {
+    transform: translateX(0);
+  }
+
+  .nav-link {
+    font-size: 1.3rem;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    z-index: 10;
+  }
+}

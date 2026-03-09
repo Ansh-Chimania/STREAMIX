@@ -1,0 +1,33 @@
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+}
+
+.person-card {
+  cursor: pointer;
+  transition: var(--transition-normal);
+  animation: fadeIn 0.5s ease;
+}
+
+.person-card:hover {
+  transform: translateY(-6px);
+}
+
+.person-card img {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+}
+
+.person-info h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.person-info p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}

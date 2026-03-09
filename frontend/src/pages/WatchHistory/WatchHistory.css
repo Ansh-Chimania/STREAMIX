@@ -1,0 +1,26 @@
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.clear-history-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(229, 9, 20, 0.15);
+  color: var(--accent-primary);
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid var(--accent-primary);
+  transition: var(--transition-fast);
+}
+
+.clear-history-btn:hover {
+  background: var(--accent-primary);
+  color: white;
+}
