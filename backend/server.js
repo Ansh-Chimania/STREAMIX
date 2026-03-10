@@ -24,16 +24,19 @@ const limiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' }
 });
 
-const allowedOrigins = (process.env.FRONTEND_URLS || 'http://localhost:3000,https://version2-jri3.onrender.com')
+const allowedOrigins = (process.env.FRONTEND_URLS || 'http://localhost:3000')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
+
+const isWildcard = allowedOrigins.includes('*');
 
 // Middleware
 app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || isWildcard || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     return callback(new Error('CORS origin not allowed'));
@@ -58,14 +61,14 @@ app.get('/api/health', async (req, res) => {
     // Test Supabase connection
     const { error } = await supabaseAdmin.from('profiles').select('id').limit(1);
     res.json({
-      status: 'CineVerse API is running',
+      status: 'Streamix API is running',
       database: error ? 'disconnected' : 'connected',
       provider: 'Supabase',
       timestamp: new Date()
     });
   } catch (err) {
     res.json({
-      status: 'CineVerse API is running',
+      status: 'Streamix API is running',
       database: 'disconnected',
       provider: 'Supabase',
       timestamp: new Date()
@@ -89,6 +92,6 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🎬 CineVerse Server running on port ${PORT}`);
+  console.log(`🎬 Streamix Server running on port ${PORT}`);
   console.log(`📦 Database: Supabase (${process.env.SUPABASE_URL})`);
 });
