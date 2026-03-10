@@ -8,7 +8,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     storageKey: 'cineverse_supabase_auth',
-    detectSessionInUrl: false
+    detectSessionInUrl: false,
+    flowType: 'implicit',
+    lock: false
   }
 });
 

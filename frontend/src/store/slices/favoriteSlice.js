@@ -3,7 +3,8 @@ import supabase from '../../api/supabase';
 
 export const fetchFavorites = createAsyncThunk('favorites/fetch', async (_, { rejectWithValue }) => {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error('Not authenticated');
 
     const { data, error } = await supabase
@@ -35,7 +36,8 @@ export const fetchFavorites = createAsyncThunk('favorites/fetch', async (_, { re
 
 export const addFavorite = createAsyncThunk('favorites/add', async (movieData, { rejectWithValue }) => {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error('Not authenticated');
 
     const { data, error } = await supabase
@@ -76,7 +78,8 @@ export const addFavorite = createAsyncThunk('favorites/add', async (movieData, {
 
 export const removeFavorite = createAsyncThunk('favorites/remove', async (tmdbId, { rejectWithValue }) => {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) throw new Error('Not authenticated');
 
     const { error } = await supabase

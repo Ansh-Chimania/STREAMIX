@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FiPlay, FiHeart, FiStar } from 'react-icons/fi';
-import { getPosterUrl, getTitle, getReleaseDate, formatYear, formatRating, getMediaType } from '../../utils/helpers';
+import { getPosterUrl, getProfileUrl, getTitle, getReleaseDate, formatYear, formatRating, getMediaType } from '../../utils/helpers';
 import { addFavorite, removeFavorite } from '../../store/slices/favoriteSlice';
 import './MovieCard.css';
 
@@ -20,8 +20,17 @@ const MovieCard = ({ item, showMediaType = false }) => {
   const title = getTitle(item);
   const year = formatYear(getReleaseDate(item));
   const rating = formatRating(item.vote_average);
-  const posterUrl = getPosterUrl(item.poster_path || item.profile_path);
   const isFavorite = favorites.some(f => f.tmdbId === item.id);
+
+  // Use the correct placeholder type for People vs Movies/TV
+  const getImgSrc = () => {
+    if (imgError) {
+      return mediaType === 'person' ? getProfileUrl(null) : getPosterUrl(null);
+    }
+    return mediaType === 'person'
+      ? getProfileUrl(item.profile_path || item.poster_path)
+      : getPosterUrl(item.poster_path || item.profile_path);
+  };
 
   const handleClick = () => {
     if (mediaType === 'person') {
@@ -55,12 +64,12 @@ const MovieCard = ({ item, showMediaType = false }) => {
       <div className="card-poster">
         {!imgLoaded && !imgError && <div className="card-skeleton" />}
         <img
-          src={imgError ? getPosterUrl(null) : posterUrl}
+          src={getImgSrc()}
           alt={title}
           loading="lazy"
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgError(true)}
-          style={{ opacity: imgLoaded ? 1 : 0 }}
+          style={{ opacity: imgLoaded || imgError ? 1 : 0 }}
         />
 
         <div className="card-overlay">

@@ -18,7 +18,7 @@ const Explore = () => {
 
   const currentData = genreFilter ? genreResults :
     type === 'tv' ? popularTV :
-    sortBy === 'top_rated' ? topRated : popular;
+      sortBy === 'top_rated' ? topRated : popular;
 
   const page = currentData.page || 1;
   const totalPages = currentData.total_pages || 1;
@@ -97,7 +97,9 @@ const Explore = () => {
           ))}
         </div>
 
-        {loading && <Loader />}
+        {loading && page === 1 && <Loader />}
+        {loading && page > 1 && <div className="loading-more">Loading more...</div>}
+
         {!loading && !currentData.results?.length && (
           <p className="no-results">No results found.</p>
         )}

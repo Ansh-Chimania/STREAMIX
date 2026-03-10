@@ -39,8 +39,8 @@ const Navbar = () => {
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          <span className="logo-cine">CINE</span>
-          <span className="logo-verse">VERSE</span>
+          <span className="logo-cine">STREAM</span>
+          <span className="logo-verse">IX</span>
         </Link>
 
         <div className={`navbar-links ${showMobileNav ? 'active' : ''}`}>

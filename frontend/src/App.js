@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import supabase from './api/supabase';
-import { setSession, logout } from './store/slices/authSlice';
+import { setSession, logout, restoreSession } from './store/slices/authSlice';
 
 // Layout Components
 import Navbar from './components/Navbar/Navbar';
@@ -37,6 +37,11 @@ const App = () => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
+  // Auto-restore Supabase session on page load
+  useEffect(() => {
+    dispatch(restoreSession());
+  }, [dispatch]);
+
   // Listen for Supabase auth state changes
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -44,7 +49,6 @@ const App = () => {
         if (event === 'SIGNED_OUT' || !session) {
           dispatch(logout());
         } else if (event === 'TOKEN_REFRESHED' && session) {
-          // Update token in localStorage when Supabase auto-refreshes
           localStorage.setItem('cineverse_token', session.access_token);
         }
       }

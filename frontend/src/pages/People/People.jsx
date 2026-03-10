@@ -46,7 +46,15 @@ const People = () => {
         <div className="people-grid">
           {people.map(person => (
             <div key={person.id} className="person-card" onClick={() => navigate(`/person/${person.id}`)}>
-              <img src={getProfileUrl(person.profile_path)} alt={person.name} loading="lazy" />
+              <img
+                src={getProfileUrl(person.profile_path)}
+                alt={person.name}
+                loading="lazy"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = getProfileUrl(null);
+                }}
+              />
               <div className="person-info">
                 <h3>{person.name}</h3>
                 <p>{person.known_for_department}</p>
@@ -55,7 +63,8 @@ const People = () => {
           ))}
         </div>
 
-        {loading && <Loader />}
+        {loading && page === 1 && <Loader />}
+        {loading && page > 1 && <div className="loading-more">Loading more...</div>}
       </div>
     </div>
   );

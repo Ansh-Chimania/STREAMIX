@@ -9,8 +9,8 @@ const Footer = () => {
       <div className="container footer-content">
         <div className="footer-brand">
           <Link to="/" className="footer-logo">
-            <span className="logo-cine">CINE</span>
-            <span className="logo-verse">VERSE</span>
+            <span className="logo-cine">STREAM</span>
+            <span className="logo-verse">IX</span>
           </Link>
           <p className="footer-desc">
             Your ultimate destination for movies and TV shows. Discover, explore, and enjoy.
@@ -44,7 +44,7 @@ const Footer = () => {
       </div>
 
       <div className="footer-bottom container">
-        <p>&copy; {new Date().getFullYear()} CineVerse. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Streamix. All rights reserved.</p>
       </div>
     </footer>
   );

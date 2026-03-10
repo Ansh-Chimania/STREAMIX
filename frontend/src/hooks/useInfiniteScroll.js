@@ -6,7 +6,7 @@ const useInfiniteScroll = (callback, hasMore) => {
   const handleScroll = useCallback(() => {
     if (
       window.innerHeight + document.documentElement.scrollTop >=
-      document.documentElement.offsetHeight - 500
+      document.documentElement.offsetHeight - 1500
     ) {
       if (hasMore && !isFetching) {
         setIsFetching(true);

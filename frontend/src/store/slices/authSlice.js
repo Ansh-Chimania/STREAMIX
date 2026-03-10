@@ -8,18 +8,52 @@ const getStoredUser = () => {
   } catch { return null; }
 };
 
+// Auto-restore session on app load
+export const restoreSession = createAsyncThunk('auth/restoreSession', async (_, { rejectWithValue }) => {
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error || !session) return rejectWithValue('No active session');
+
+    // Fetch profile
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .single();
+
+    if (!profile) return rejectWithValue('Profile not found');
+
+    const user = {
+      id: session.user.id,
+      name: profile.name || '',
+      email: profile.email || session.user.email,
+      role: profile.role || 'user',
+      avatar: profile.avatar || '',
+      preferences: profile.preferences || { darkMode: true, favoriteGenres: [] }
+    };
+
+    localStorage.setItem('cineverse_token', session.access_token);
+    localStorage.setItem('cineverse_user', JSON.stringify(user));
+
+    return { token: session.access_token, user };
+  } catch (error) {
+    return rejectWithValue(error.message || 'Session restore failed');
+  }
+});
+
 export const signup = createAsyncThunk('auth/signup', async ({ name, email, password }, { rejectWithValue }) => {
   try {
-    // Sign up with Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { name }
-      }
+      options: { data: { name } }
     });
 
     if (authError) throw authError;
+
+    if (!authData.session) {
+      return rejectWithValue('This email is already registered. Please sign in instead.');
+    }
 
     // Update profile name
     if (authData.user) {
@@ -48,10 +82,7 @@ export const signup = createAsyncThunk('auth/signup', async ({ name, email, pass
     localStorage.setItem('cineverse_token', authData.session.access_token);
     localStorage.setItem('cineverse_user', JSON.stringify(user));
 
-    return {
-      token: authData.session.access_token,
-      user
-    };
+    return { token: authData.session.access_token, user };
   } catch (error) {
     return rejectWithValue(error.message || 'Signup failed');
   }
@@ -65,37 +96,45 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }, 
     });
 
     if (error) throw error;
+    if (!data.session) throw new Error('No session returned');
 
-    // Fetch profile
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', data.user.id)
-      .single();
+    // Fetch profile with timeout (don't let it hang forever)
+    let profile = null;
+    try {
+      const profilePromise = supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
 
-    if (profileError) throw profileError;
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 3000)
+      );
 
-    if (profile.is_banned) {
+      const { data: profileData } = await Promise.race([profilePromise, timeoutPromise]);
+      profile = profileData;
+    } catch (profileErr) {
+      console.warn('[Auth] Profile fetch failed/timed out, using auth metadata:', profileErr.message);
+    }
+
+    if (profile?.is_banned) {
       await supabase.auth.signOut();
       return rejectWithValue('Your account has been banned');
     }
 
     const user = {
       id: data.user.id,
-      name: profile.name,
-      email: profile.email,
-      role: profile.role,
-      avatar: profile.avatar,
-      preferences: profile.preferences
+      name: profile?.name || data.user.user_metadata?.name || '',
+      email: profile?.email || data.user.email,
+      role: profile?.role || 'user',
+      avatar: profile?.avatar || '',
+      preferences: profile?.preferences || { darkMode: true, favoriteGenres: [] }
     };
 
     localStorage.setItem('cineverse_token', data.session.access_token);
     localStorage.setItem('cineverse_user', JSON.stringify(user));
 
-    return {
-      token: data.session.access_token,
-      user
-    };
+    return { token: data.session.access_token, user };
   } catch (error) {
     return rejectWithValue(error.message || 'Login failed');
   }
@@ -198,6 +237,23 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Restore session
+      .addCase(restoreSession.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.isAuthenticated = true;
+        state.loading = false;
+      })
+      .addCase(restoreSession.rejected, (state) => {
+        state.loading = false;
+        // Clear stale data if session restore fails
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+        localStorage.removeItem('cineverse_token');
+        localStorage.removeItem('cineverse_user');
+      })
+      // Signup
       .addCase(signup.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(signup.fulfilled, (state, action) => {
         state.loading = false;
@@ -209,6 +265,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      // Login
       .addCase(login.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;

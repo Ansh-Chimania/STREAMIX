@@ -33,7 +33,7 @@ const Login = () => {
       <div className="auth-container">
         <div className="auth-card">
           <h1 className="auth-title">Sign In</h1>
-          <p className="auth-subtitle">Welcome back to CineVerse</p>
+          <p className="auth-subtitle">Welcome back to Streamix</p>
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
@@ -64,7 +64,7 @@ const Login = () => {
           </form>
 
           <p className="auth-switch">
-            New to CineVerse? <Link to="/signup">Sign Up Now</Link>
+            New to Streamix? <Link to="/signup">Sign Up Now</Link>
           </p>
         </div>
       </div>

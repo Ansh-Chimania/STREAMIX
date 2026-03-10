@@ -35,7 +35,14 @@ const PersonDetail = () => {
       <div className="container">
         <div className="person-main">
           <div className="person-photo">
-            <img src={getProfileUrl(person.profile_path, 'large')} alt={person.name} />
+            <img
+              src={getProfileUrl(person.profile_path, 'large')}
+              alt={person.name}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = getProfileUrl(null);
+              }}
+            />
           </div>
           <div className="person-bio">
             <h1>{person.name}</h1>

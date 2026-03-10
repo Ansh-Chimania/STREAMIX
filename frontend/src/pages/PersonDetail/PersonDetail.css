@@ -34,6 +34,7 @@
   color: var(--text-secondary);
   line-height: 1.7;
   max-width: 700px;
+  white-space: pre-line;
 }
 
 @media (max-width: 768px) {
@@ -42,7 +43,16 @@
     align-items: center;
     text-align: center;
   }
-  .person-photo { width: 200px; }
-  .person-bio h1 { font-size: 1.8rem; }
-  .person-meta { justify-content: center; }
+
+  .person-photo {
+    width: 200px;
+  }
+
+  .person-bio h1 {
+    font-size: 1.8rem;
+  }
+
+  .person-meta {
+    justify-content: center;
+  }
 }

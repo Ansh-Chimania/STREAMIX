@@ -8,7 +8,7 @@ const Loader = ({ fullPage = false }) => {
         <div className="spinner-ring"></div>
         <div className="spinner-ring"></div>
         <div className="spinner-ring"></div>
-        <span className="loader-text">CINEVERSE</span>
+        <span className="loader-text">STREAMIX</span>
       </div>
     </div>
   );

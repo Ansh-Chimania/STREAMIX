@@ -2,7 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import supabase from '../../api/supabase';
 
 export const fetchWatchHistory = createAsyncThunk('watchHistory/fetch', async (page = 1) => {
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
   if (!user) throw new Error('Not authenticated');
 
   const limit = 20;
@@ -48,7 +49,8 @@ export const fetchWatchHistory = createAsyncThunk('watchHistory/fetch', async (p
 });
 
 export const addToWatchHistory = createAsyncThunk('watchHistory/add', async (movieData) => {
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
   if (!user) throw new Error('Not authenticated');
 
   // Check if exists (upsert-like)
@@ -108,7 +110,8 @@ export const addToWatchHistory = createAsyncThunk('watchHistory/add', async (mov
 });
 
 export const clearWatchHistory = createAsyncThunk('watchHistory/clear', async () => {
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
   if (!user) throw new Error('Not authenticated');
 
   const { error } = await supabase
@@ -136,6 +139,9 @@ const watchHistorySlice = createSlice({
         state.items = action.payload.history;
         state.page = action.payload.page;
         state.total_pages = action.payload.total_pages;
+      })
+      .addCase(fetchWatchHistory.rejected, (state) => {
+        state.loading = false;
       })
       .addCase(clearWatchHistory.fulfilled, (state) => {
         state.items = [];

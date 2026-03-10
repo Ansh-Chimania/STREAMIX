@@ -33,14 +33,15 @@ export const formatYear = (dateStr) => {
 
 export const formatRuntime = (minutes) => {
   if (!minutes) return '';
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
+  const num = Number(minutes);
+  const h = Math.floor(num / 60);
+  const m = num % 60;
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 };
 
 export const formatRating = (rating) => {
   if (!rating) return 'N/A';
-  return rating.toFixed(1);
+  return Number(rating).toFixed(1);
 };
 
 export const truncateText = (text, maxLength = 200) => {
