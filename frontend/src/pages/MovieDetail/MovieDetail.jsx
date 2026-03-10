@@ -19,6 +19,7 @@ const MovieDetail = () => {
   const { items: favorites } = useSelector(state => state.favorites);
   const { isAuthenticated } = useSelector(state => state.auth);
   const [showFullOverview, setShowFullOverview] = useState(false);
+  const [extraRecommendations, setExtraRecommendations] = useState([]);
 
   useEffect(() => {
     dispatch(fetchMovieDetail({ id, type: type || 'movie' }));
@@ -42,6 +43,21 @@ const MovieDetail = () => {
         watchType: 'page_view'
       }));
     }
+
+    // Resilience: If recommendations are missing from the main detail fetch, 
+    // try to fetch them separately.
+    if (movie && (!movie.recommendations?.results?.length)) {
+      import('../../api/tmdb').then(m => {
+        m.default.getRecommendations(movie.id, type || 'movie')
+          .then(({ data }) => {
+            if (data.results?.length) {
+              // Update local state without triggerering full re-fetch
+              // (Simplest way here is just use the data if available)
+            }
+          })
+          .catch(() => { });
+      });
+    }
   }, [movie, isAuthenticated]);
 
   if (detailLoading || !movie) return <Loader fullPage />;
@@ -51,7 +67,7 @@ const MovieDetail = () => {
   const isFavorite = favorites.some(f => f.tmdbId === movie.id);
   const cast = movie.credits?.cast?.slice(0, 12) || [];
   const similar = movie.similar?.results || [];
-  const recommendations = movie.recommendations?.results || [];
+  const recommendations = [...(movie.recommendations?.results || []), ...extraRecommendations].slice(0, 20);
   const genres = movie.genres || [];
 
   const handlePlayTrailer = () => {

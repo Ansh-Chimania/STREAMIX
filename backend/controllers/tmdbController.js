@@ -1,13 +1,18 @@
 const axios = require('axios');
 
-const TMDB_BASE = process.env.TMDB_BASE_URL;
+const TMDB_BASE = process.env.TMDB_BASE_URL || 'https://api.themoviedb.org/3';
 const API_KEY = process.env.TMDB_API_KEY;
 
 const tmdbFetch = async (endpoint, params = {}) => {
-  const response = await axios.get(`${TMDB_BASE}${endpoint}`, {
-    params: { api_key: API_KEY, ...params }
-  });
-  return response.data;
+  try {
+    const response = await axios.get(`${TMDB_BASE}${endpoint}`, {
+      params: { api_key: API_KEY, ...params }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`[TMDB Proxy Error] ${endpoint}:`, error.response?.data || error.message);
+    throw error;
+  }
 };
 
 exports.getTrending = async (req, res) => {
