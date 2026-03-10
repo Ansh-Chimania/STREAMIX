@@ -51,14 +51,13 @@ const MovieDetail = () => {
         m.default.getRecommendations(movie.id, type || 'movie')
           .then(({ data }) => {
             if (data.results?.length) {
-              // Update local state without triggerering full re-fetch
-              // (Simplest way here is just use the data if available)
+              setExtraRecommendations(data.results);
             }
           })
           .catch(() => { });
       });
     }
-  }, [movie, isAuthenticated]);
+  }, [movie, isAuthenticated, type]);
 
   if (detailLoading || !movie) return <Loader fullPage />;
 
